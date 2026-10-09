@@ -63,6 +63,10 @@ def install(base_url):
                 metadata.setdefault('cellId', uuid.uuid4().hex)
                 metadata.setdefault('deletedCells', [])
                 metadata.setdefault('recordTiming', False)
+                # DataSphere's own frontend sends the VM selection here,
+                # not in POST /api/kernels and not in notebook kernelspec.
+                from compute_config import apply_selection
+                apply_selection(self.socket.url, metadata)
         return original_send(self, msg)
 
     JupyterKernelClient.start = start

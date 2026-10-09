@@ -7,6 +7,7 @@
 - `start_mcp.py`, `runtime.py` — запуск и bootstrap адаптеров;
 - `rest_notebook_compat.py`, `kernel_compat.py` — DataSphere compatibility;
 - `file_transfer_tools.py` — upload/download/link;
+- `compute_config.py` — чтение и явный выбор compute для отдельного kernel;
 - `verify_mcp.py`, `verify_file_transfer.py` — удалённые smoke tests;
 - `test_*.py` — локальные тесты.
 
@@ -69,6 +70,14 @@ python3 ~/.pi/agent/datasphere/verify_mcp.py
 ```
 
 Полный тест исполнения должен вывести `MCP END-TO-END VERIFIED`. MCP connected не гарантирует, что удалённый kernel доступен. Не повторяйте таймауты автоматически и не тестируйте на рабочем kernel.
+
+## Явный выбор compute (GPU)
+
+После обновления выполните `/reload`. Добавлены `get_kernel_compute(kernel_id)` и `select_kernel_compute(kernel_id, spec)`.
+
+Выберите собственное idle-ядро, прочитайте его конфигурацию. Для `NOT_SPECIFIED` явно задайте согласованный с пользователем spec (например, `g1.1`). Выбор не запускает ВМ: адаптер добавит `metadata.spec_config` при следующем выполнении Python, как frontend DataSphere. Проверяйте фактическую конфигурацию и GPU после выполнения. Квота и доступность не гарантируются; выполнение может тарифицироваться. Выбор хранится только в MCP-процессе и теряется после `/reload`.
+
+Если ядро уже использует другую конфигурацию, инструмент откажется её менять. Не останавливайте чужие вычисления; используйте новое ядро либо согласуйте остановку через сайт. Настройки проекта не изменяются. Offline-тест: `python -m unittest test_compute_config test_kernel_compat test_file_transfer_tools`. Живой запуск `g1.1` через MCP проверен: `get_kernel_compute` подтвердил `g1.1`, `nvidia-smi` показал Tesla V100-PCIE-32GB, 32768 MiB. Подробности в `docs/datasphere-compute-api.md` основного проекта.
 
 ## Работа и безопасность
 

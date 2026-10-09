@@ -30,6 +30,9 @@ install_rest_notebook_compat()
 from kernel_compat import install as install_kernel_compat
 install_kernel_compat(os.environ['JUPYTER_URL'])
 
+from compute_config import install as install_compute_config
+install_compute_config(os.environ['JUPYTER_URL'], os.environ['JUPYTER_TOKEN'])
+
 from file_transfer_tools import install as install_file_transfer_tools
 install_file_transfer_tools(os.environ['JUPYTER_URL'], os.environ['JUPYTER_TOKEN'])
 
