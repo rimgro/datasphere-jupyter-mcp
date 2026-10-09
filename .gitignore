@@ -1,0 +1,6 @@
+token
+*.env
+*_verification.json
+verification.json
+__pycache__/
+*.py[cod]
